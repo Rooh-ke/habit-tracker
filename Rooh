@@ -1,0 +1,347 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Tracker</title>
+  <style>
+    :root {
+      --bg-color: #f4f6f9;
+      --card-bg: #ffffff;
+      --primary-color: #4f46e5;
+      --primary-hover: #4338ca;
+      --text-color: #1f2937;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --streak-bg: #fef3c7;
+      --streak-text: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card-bg);
+      border-radius: 14px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      padding: 1.75rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      color: var(--text-color);
+    }
+
+    .reset-btn {
+      background: #f3f4f6;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .reset-btn:hover {
+      background: #e5e7eb;
+      color: var(--text-color);
+    }
+
+    /* Progress Bar Section */
+    .progress-section {
+      margin-bottom: 1.5rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background-color: var(--border-color);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--success-color);
+      transition: width 0.3s ease;
+    }
+
+    /* Input Section */
+    .input-section {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-section input {
+      flex: 1;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .input-section input:focus {
+      border-color: var(--primary-color);
+    }
+
+    .input-section button {
+      padding: 0.75rem 1.25rem;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .input-section button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* Habit List */
+    ul {
+      list-style: none;
+    }
+
+    .habit-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.875rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      background-color: #fafafa;
+      transition: background-color 0.2s;
+    }
+
+    .habit-item.completed {
+      background-color: #ecfdf5;
+      border-color: #a7f3d0;
+    }
+
+    .habit-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .habit-info input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      cursor: pointer;
+      accent-color: var(--success-color);
+    }
+
+    .habit-name {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .habit-item.completed .habit-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .habit-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .streak-badge {
+      background-color: var(--streak-bg);
+      color: var(--streak-text);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+    }
+
+    .delete-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0.25rem 0.4rem;
+      transition: color 0.2s;
+    }
+
+    .delete-btn:hover {
+      color: var(--danger-color);
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      margin: 2rem 0;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Habit Tracker</h1>
+      <button class="reset-btn" onclick="resetDay()" title="Uncheck all habits for a new day">New Day</button>
+    </header>
+
+    <div class="progress-section">
+      <div class="progress-header">
+        <span>Daily Progress</span>
+        <span id="progressText">0 / 0 (0%)</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <div class="input-section">
+      <input type="text" id="habitInput" placeholder="Add a new habit..." autocomplete="off">
+      <button onclick="addHabit()">Add</button>
+    </div>
+
+    <ul id="habitList"></ul>
+  </div>
+
+  <script>
+    let habits = JSON.parse(localStorage.getItem("habits_v2")) || [];
+    const habitInput = document.getElementById("habitInput");
+    const habitList = document.getElementById("habitList");
+    const progressText = document.getElementById("progressText");
+    const progressFill = document.getElementById("progressFill");
+
+    function saveHabits() {
+      localStorage.setItem("habits_v2", JSON.stringify(habits));
+    }
+
+    function updateProgress() {
+      const total = habits.length;
+      const completed = habits.filter(h => h.completed).length;
+      const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+      progressText.textContent = `${completed} / ${total} (${percent}%)`;
+      progressFill.style.width = `${percent}%`;
+    }
+
+    function renderHabits() {
+      habitList.innerHTML = "";
+      updateProgress();
+
+      if (habits.length === 0) {
+        habitList.innerHTML = `<li class="empty-state">No habits added yet. Start by adding one above!</li>`;
+        return;
+      }
+
+      habits.forEach((habit, index) => {
+        const li = document.createElement("li");
+        li.className = `habit-item ${habit.completed ? 'completed' : ''}`;
+        li.innerHTML = `
+          <label class="habit-info">
+            <input type="checkbox" ${habit.completed ? 'checked' : ''} onclick="toggleHabit(${index})">
+            <span class="habit-name">${escapeHTML(habit.text)}</span>
+          </label>
+          <div class="habit-actions">
+            <span class="streak-badge" title="Current streak">🔥 ${habit.streak}d</span>
+            <button class="delete-btn" onclick="deleteHabit(${index})" title="Delete habit">✕</button>
+          </div>
+        `;
+        habitList.appendChild(li);
+      });
+    }
+
+    function addHabit() {
+      const text = habitInput.value.trim();
+      if (!text) return;
+      habits.push({ text: text, completed: false, streak: 0 });
+      habitInput.value = "";
+      saveHabits();
+      renderHabits();
+    }
+
+    function toggleHabit(index) {
+      const habit = habits[index];
+      habit.completed = !habit.completed;
+      habit.streak = habit.completed ? habit.streak + 1 : Math.max(0, habit.streak - 1);
+      saveHabits();
+      renderHabits();
+    }
+
+    function resetDay() {
+      habits.forEach(habit => {
+        if (!habit.completed) {
+          habit.streak = 0; // Reset streak if missed yesterday
+        }
+        habit.completed = false;
+      });
+      saveHabits();
+      renderHabits();
+    }
+
+    function deleteHabit(index) {
+      habits.splice(index, 1);
+      saveHabits();
+      renderHabits();
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    habitInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") addHabit();
+    });
+
+    renderHabits();
+  </script>
+</body>
+</html>
